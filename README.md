@@ -3,7 +3,7 @@ python3 scripts for plotting solid works txt output files.
 
 quick starting guide
 1. clone repository<br>
-$git clone<br>
+$git clone git@github.com:toyamagaio/plotSolidWorks.git<br>
 $cd plotSolidWorks
 2. put example txt data to 'data' directory<br>
 $mkdir data<br>
