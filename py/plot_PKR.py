@@ -21,44 +21,68 @@ def common_suffix(strings):
   # Revert the common suffix back to its original orientation and return
   return common_prefix_reversed[::-1]
 
+def parse_datetime(t):
+    return datetime.strptime(t, '%Y-%m-%d %H:%M:%S')
+
 def parse_time(t):
     return datetime.strptime(t, '%H:%M:%S')
 
 def format_time(dt):
     return dt.strftime('%H:%M')
 
-def plot_in_line_fromCSV(filename, outpdf,axname='Time', col_names=['Channel 1 [hPascal]'], log_flag=False):
+def plot_in_line_fromCSV(filename, outpdf, col_names=['Channel 1 [hPascal]'], interval_tlabel=5, log_flag=False):
 
   df=pd.read_csv(filename, header=10,delimiter=';')
   pp=PdfPages(outpdf)
   print(df)
   print(df.keys())
  
-  time=list()
-  for t in df[axname]:
-    hhmmss=parse_time(t)
-    hhmm  =format_time(hhmmss)
-    time.append(hhmm)
-  print(time)
+  time_data=list()
+  for d,t in zip(df['Date'],df['Time']):
+    print(d,t)
+    print(d+' '+t)
+    dts=parse_datetime(d+' '+t)
+    time_data.append(dts)
+  print(time_data)
+  df['DateTime']=time_data
+
+  cut=df['DateTime']<datetime(2023,11,15,11,20)
 
   for col_name in col_names:
     fig,ax=plt.subplots(figsize=(8,4.5))
-    fig.autofmt_xdate(rotation=45)
-    #ax.plot(range(len(df_cut)),df_cut[col_name])
-    ax.plot(time,df[col_name], label=col_name)
+    #fig.autofmt_xdate(rotation=45)
+    #ax.plot(time_data,df[col_name], label=col_name)
+    ax.plot(df['DateTime'],df[col_name], label=col_name)
     ax.set_ylabel(col_name)
-    ax.set_xlabel(axname)
+    ax.set_xlabel('Time')
     ax.legend(ncol=2)
-    #ax.set_xticks(rotation=45)
-    #ax.set_xticks(ax.get_xticks(), rotation=45)
     print(ax.get_xticks())
     print(ax.get_xticklabels())
-    #ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    #ax.set_xticks(time_data[::interval_tlabel])
+    #ax.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data[::interval_tlabel]], rotation=45, ha='center')
+    ax.set_xticks(df['DateTime'][::interval_tlabel])
+    ax.set_xticklabels([t.strftime('%m/%d %H:%M') for t in df['DateTime'][::interval_tlabel]], rotation=45, ha='center')
     if log_flag:
       ax.set_yscale('log')
     fig.tight_layout()
     pp.savefig(fig)
     plt.close('all')
+
+    ##cut1
+    fig1,ax1=plt.subplots(figsize=(8,4.5))
+    ax1.plot(df['DateTime'][cut],df[col_name][cut], label=col_name)
+    ax1.set_ylabel(col_name)
+    ax1.set_xlabel('Time')
+    ax1.legend(ncol=2)
+    time_data_cut=df['DateTime'][cut].copy()
+    ax1.set_xticks(time_data_cut[::interval_tlabel])
+    ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::interval_tlabel]], rotation=45, ha='center')
+    if log_flag:
+      ax1.set_yscale('log')
+    fig1.tight_layout()
+    pp.savefig(fig1)
+    plt.close('all')
+
   pp.close()
 
 def plot_single_along_axis():
