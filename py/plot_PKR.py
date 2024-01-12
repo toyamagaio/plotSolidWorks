@@ -47,20 +47,21 @@ def plot_in_line_fromCSV(filename, outpdf, col_names=['Channel 1 [hPascal]'], in
   print(time_data)
   df['DateTime']=time_data
 
-<<<<<<< HEAD
   #cut=df['DateTime']<datetime(2023,11,17,12,30)
-  cut1=df['DateTime']<datetime(2023,11,21,12,00) #just before kaiho
-  cut2=df['DateTime']<datetime(2023,11,20,18,10) #before scroll stop
-  cut3=(df['DateTime']>datetime(2023,11,20,18,15)) & (df['DateTime']<datetime(2023,11,21,12,00))#after scroll stop, before kaiho
-  cuts=[cut1,cut2,cut3]
+  #cut1=df['DateTime']<datetime(2023,11,21,12,00) #just before kaiho
+  #cut2=df['DateTime']<datetime(2023,11,20,18,10) #before scroll stop
+  #cut3=(df['DateTime']>datetime(2023,11,20,18,15)) & (df['DateTime']<datetime(2023,11,21,12,00))#after scroll stop, before kaiho
+  #cuts=[cut1,cut2,cut3]
 
-  cut1=df['DateTime']<datetime(2023,12,12,9,30) #
-  cuts=[]
-=======
-  #cut=df['DateTime']<datetime(2023,11,15,11,20)
-  #cut=df['DateTime']<datetime(2024,1,5,23,20)
-  cut=df['DateTime']<datetime(2024,1,7,23,20)
->>>>>>> mac
+  #cut1=df['DateTime']<datetime(2023,12,12,9,30) #
+  #cut1=df['DateTime']<datetime(2023,11,15,11,20)
+  #cut1=df['DateTime']<datetime(2024,1,5,23,20)
+  #cut1=df['DateTime']<datetime(2024,1,7,23,20)
+  cut1=df['DateTime']<datetime(2024,1,8,21,30)
+  cut2=(df['DateTime']<datetime(2024,1,9,23,30)) #&(df['DateTime']<datetime(2024,1,10,23,20))
+  cut3=(df['DateTime']>datetime(2024,1,8,19,29))&(df['DateTime']<datetime(2024,1,9,23,31))
+  cuts=[cut1,cut2,cut3]
+  interval_tlabels=[30,180,120]
 
   fig,ax=plt.subplots(figsize=(8,4.5))
   for col_name in col_names:
@@ -86,40 +87,34 @@ def plot_in_line_fromCSV(filename, outpdf, col_names=['Channel 1 [hPascal]'], in
   pp.savefig(fig)
   plt.close('all')
 
-  fig1,ax1=plt.subplots(figsize=(8,4.5))
-  for col_name in col_names:
-    ##cut1
-  #  for cut in cuts:
-  #    fig1,ax1=plt.subplots(figsize=(8,4.5))
-  #    ax1.plot(df['DateTime'][cut],df[col_name][cut], label=col_name)
-  #    ax1.set_ylabel(col_name)
-  #    ax1.set_xlabel('Time')
-  #    ax1.legend(ncol=2)
-  #    time_data_cut=df['DateTime'][cut].copy()
-  #    npoint=len(time_data_cut)
-  #    ax1.set_xticks(time_data_cut[::int(npoint/10)])
-  #    ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::int(npoint/10)]], rotation=45, ha='center')
-  #    ax1.grid(color='0.5', linestyle='--', linewidth=0.5)
-  #    if log_flag:
-  #      ax1.set_yscale('log')
-  #    fig1.tight_layout()
-  #    pp.savefig(fig1)
-  #    plt.close('all')
-  #pp.close()
-    ax1.plot(df['DateTime'][cut],df[col_name][cut], label=col_name)
+  for cut,interval_tlabel in zip(cuts,interval_tlabels):
+    fig1,ax1=plt.subplots(figsize=(8,4.5))
+    time_data_cut=df['DateTime'][cut].copy()
+    npoint=len(time_data_cut)
+    for col_name in col_names:
+      ax1.plot(df['DateTime'][cut],df[col_name][cut], label=col_name)
+      ax1.grid(color='0.5', linestyle='--', linewidth=0.5)
+      if log_flag:
+        ax1.set_yscale('log')
+
     ax1.set_ylabel(col_name)
     ax1.set_xlabel('Time')
     ax1.legend(ncol=2)
-    time_data_cut=df['DateTime'][cut].copy()
-    #ax1.set_xticks(time_data_cut[::interval_tlabel])
-    #ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::interval_tlabel]], rotation=45, ha='center')
-    ax1.set_xticks(time_data_cut[::20])
-    ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::20]], rotation=45, ha='center')
+    #ax1.set_xticks(time_data_cut[::int(npoint/10)])
+    #ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::int(npoint/10)]], rotation=45, ha='center')
+    ax1.set_xticks(time_data_cut[::interval_tlabel])
+    ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::interval_tlabel]], rotation=45, ha='center')
+    #ax1.set_xticks(time_data_cut[::20])
+    #ax1.set_xticklabels([t.strftime('%m/%d %H:%M') for t in time_data_cut[::20]], rotation=45, ha='center')
+
+    ax1.axhline(y=1.33e-1, color='r',linestyle='--')
     if log_flag:
       ax1.set_yscale('log')
-  ax1.grid(color = "gray", linestyle="--")
-  fig1.tight_layout()
-  pp.savefig(fig1)
+    ax1.grid(color = "gray", linestyle="--")
+    fig1.tight_layout()
+    pp.savefig(fig1)
+    plt.close('all')
+  pp.close()
 
 def compare(filenames, labels, outpdf, col_name='Channel 1 [hPascal]', interval_tlabel=5, log_flag=False, max_hours=None):
 
@@ -183,14 +178,26 @@ def plot_single_along_axis():
   fname=datadir+'*.csv'
   #plot_in_line_fromCSV(datadir+filename,outpdf, log_flag=True)
 
+  ##################
+  #####MLF data#####
+  ##################
   filename='DATALOG_20240105_220800.csv'
-  outpdf='hpd107_20240105.pdf'
+  outpdf='../pdf/hpd107_20240105.pdf'
   #plot_in_line_fromCSV(datadir+filename, outpdf, col_names=['Channel 1 [Pascal]'], interval_tlabel=60, log_flag=True)
 
   filename='DATALOG_20240107_211306.csv'
-  outpdf='hpd107_20240107_doubleTMP.pdf'
-  plot_in_line_fromCSV(datadir+filename, outpdf, col_names=['Channel 1 [Pascal]', 'Channel 2 [Pascal]'], interval_tlabel=60, log_flag=True)
+  outpdf='../pdf/hpd107_20240107_doubleTMP.pdf'
+  #plot_in_line_fromCSV(datadir+filename, outpdf, col_names=['Channel 1 [Pascal]', 'Channel 2 [Pascal]'], interval_tlabel=60, log_flag=True)
 
+  filename='DATALOG_20240108_162904.csv'
+  outpdf='../pdf/hpd107_20240108_doubleTMP.pdf'
+  plot_in_line_fromCSV(datadir+filename, outpdf, col_names=['Channel 1 [Pascal]', 'Channel 2 [Pascal]'], interval_tlabel=180, log_flag=True)
+
+  
+
+  #########################
+  #####Chubu Univ data#####
+  #########################
   #filename='DATALOG_20231117_114333.csv' #11:44 scroll on +  11:51 TMP on 
   #outpdf='blank_20231117_genatsu.pdf'
   #plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
@@ -218,13 +225,13 @@ def plot_single_along_axis():
   #plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
 
   #blank
-  filename='DATALOG_20231212_103606.csv' #TMP on 
-  outpdf  ='CFRP_blank_20231212_TMPon.pdf'
-  plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
+  #filename='DATALOG_20231212_103606.csv' #TMP on 
+  #outpdf  ='CFRP_blank_20231212_TMPon.pdf'
+  #plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
 
-  filename='DATALOG_20231212_143735.csv' #TMP off 
-  outpdf  ='CFRP_blank_20231212_TMPoff.pdf'
-  plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
+  #filename='DATALOG_20231212_143735.csv' #TMP off 
+  #outpdf  ='CFRP_blank_20231212_TMPoff.pdf'
+  #plot_in_line_fromCSV(datadir+filename,outpdf, col_names=['Channel 1 [Pascal]'],log_flag=True, interval_tlabel=60)
 
   #t=1.5
   #filename='DATALOG_20231212_185723.csv' #TMP on 
@@ -257,5 +264,5 @@ def plot_compare():
   #compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True, max_hours=5)
 
 if __name__=="__main__":
-  #plot_single_along_axis()
-  plot_compare()
+  plot_single_along_axis()
+  #plot_compare()
