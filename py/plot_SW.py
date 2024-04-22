@@ -207,7 +207,8 @@ def read_example():
 
   v1=y
   v2=z
-  plot_in_line(files, times, outpdf, outcsv, v1, v2, ax1='Y [mm]',ax2='Z [mm]', col_names=['Density (Fluid) [kg/m^3]','Pressure [Pa]', 'X [mm]','Y [mm]', 'Z [mm]','Distance'])
+  #plot_in_line(files, times, outpdf, outcsv, v1, v2, ax1='Y [mm]',ax2='Z [mm]', col_names=['Density (Fluid) [kg/m^3]','Pressure [Pa]', 'X [mm]','Y [mm]', 'Z [mm]','Distance'])
+  plot_in_line(files, times, outpdf, outcsv, v1, v2, ax1='Y [mm]',ax2='Z [mm]', col_names=['Pressure [Pa]', 'X [mm]','Y [mm]', 'Z [mm]'])
 
 
 def read_all():
