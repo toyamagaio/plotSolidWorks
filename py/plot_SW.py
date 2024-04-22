@@ -60,11 +60,12 @@ def plot_in_line(files, times, outpdf, outcsv, v1, v2, ax1='X [mm]',ax2='Y [mm]'
   ax3.remove(ax2)
   print(ax3)
 
-  #cut_idx= (df0['Y [mm]']<100) & (df0['Y [mm]']>-100)
+  cut_idx= (df0['Y [mm]']<5.5) & (df0['Y [mm]']>-4.5) & (df0['X [mm]']<25.5) & (df0['X [mm]']>-24.5) & (df0['Z [mm]']<24.5) & (df0['Z [mm]']>-24.5)
 
   pp=PdfPages(outpdf)
   fig = plt.figure()
   ax = fig.add_subplot(111, projection='3d')
+  #ax.scatter(df0['X [mm]'],df0['Y [mm]'],df0['Z [mm]'])
   ax.scatter(df0['X [mm]'][cut_idx],df0['Y [mm]'][cut_idx],df0['Z [mm]'][cut_idx])
   ax.set_xlabel('X [mm]')
   ax.set_ylabel('Y [mm]')
@@ -234,6 +235,18 @@ def read_all():
     plot_at_point(files,labels,outpdf,outcsv,x,y,z,col_names=['Density (Fluid) [kg/m^3]', 'Pressure [Pa]', 'Temperature [K]'])
     print('ouputpdf: {}'.format(outpdf))
 
+def read_a_file():
+  v1=0
+  v2=0
+  outpdf='pdf/hoge.pdf'
+  outcsv='hoge.csv'
+  files=['../data/r051-XY/r051-s1-XY_0.txt']
+  times=[0]
+  plot_in_line(files, times, outpdf, outcsv, v1, v2, ax1='X [mm]',ax2='Y [mm]', col_names=['Density (Fluid) [kg/m^3]'])
+
+
 if __name__=="__main__":
-  read_example()
+  #read_example()
   #read_all()
+
+  read_a_file()

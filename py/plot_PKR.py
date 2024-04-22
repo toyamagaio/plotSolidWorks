@@ -96,7 +96,7 @@ def plot_in_line_fromCSV(filename, outpdf, col_names=['Channel 1 [hPascal]'], in
 
   pp.close()
 
-def compare(filenames, labels, outpdf, col_name='Channel 1 [hPascal]', interval_tlabel=5, log_flag=False):
+def compare(filenames, labels, outpdf, col_name='Channel 1 [hPascal]', interval_tlabel=5, log_flag=False, max_hours=None):
 
   pp=PdfPages(outpdf)
   fig,ax=plt.subplots(figsize=(8,4.5))
@@ -121,7 +121,18 @@ def compare(filenames, labels, outpdf, col_name='Channel 1 [hPascal]', interval_
     df['TimeDelta']=[ t-time_data[0] for  t in time_data ]
     df['hours'] = [ t.total_seconds()/3600 for t in df['TimeDelta']]
 
-    ax.plot(df['hours'],df[col_name], label=label)
+    if max_hours != None:
+      cut=(df['hours']<max_hours)
+      ax.plot(df['hours'][cut],df[col_name][cut], label=label)
+    else:
+      ax.plot(df['hours'],df[col_name], label=label)
+
+  
+  ####
+  #t=[0,7./60.,1.+34./60., 2.]
+  #p=[48,4.62e-2,8.88e-3, 6.15e-3]
+  #ax.scatter(t,p,color='k',marker='x',label='t=1.5 (stycast seal)')
+  ####
   ax.set_ylabel(col_name)
   ax.set_xlabel('Time [h]')
   ax.legend(ncol=2)
@@ -190,18 +201,23 @@ def plot_single_along_axis():
 def plot_compare():
   datadir='../data/PKR/'
   ##CFRP vacuuming
-  fnames=['DATALOG_20231212_103606.csv','DATALOG_20231213_190128.csv','DATALOG_20231211_164551.csv','DATALOG_20231212_185723.csv']
-  labels   =['blank','blank(2)','t=1.0 mm', 't=1.5 mm']
+  fnames=['DATALOG_20231212_103606.csv','DATALOG_20231213_190128.csv','DATALOG_20231211_164551.csv','DATALOG_20231212_185723.csv','DATALOG_20231219_115111.csv','DATALOG_20231220_092517.csv','DATALOG_20231220_144124.csv','DATALOG_20231222_202955.csv','DATALOG_20231224_142230.csv']
+  labels   =['blank','blank(2)','t=1.0 mm', 't=1.5 mm','t=1.5 mm (w/ seal)','t=1.5 mm(2)','t=1.5 mm (w/ seal, 2)','t=1.5 mm (w/ seal, 3)','t=1.5 mm (seal both)']
   filenames=[datadir+fname for fname in fnames]
-  outpdf='pdf/CFRP_vacuuming2.pdf'
-  compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True)
+  ##outpdf='pdf/CFRP_vacuuming2.pdf'
+  #outpdf='pdf/CFRP_vacuuming3_seal.pdf'
+  #compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True)
+  outpdf='pdf/CFRP_vacuuming3_seal_5hours.pdf'
+  compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True, max_hours=5)
 
   ##CFRP sealing
-  #fnames=['DATALOG_20231212_143735.csv','DATALOG_20231214_084107.csv','DATALOG_20231211_204712.csv','DATALOG_20231212_230248.csv']
-  #labels   =['blank','blank(2)','t=1.0 mm', 't=1.5 mm']
+  #fnames=['DATALOG_20231212_143735.csv','DATALOG_20231214_084107.csv','DATALOG_20231211_204712.csv','DATALOG_20231212_230248.csv','DATALOG_20231219_143838.csv','DATALOG_20231220_120855.csv','DATALOG_20231220_171345.csv','DATALOG_20231223_133000.csv','DATALOG_20231225_085709.csv']
+  #labels   =['blank','blank(2)','t=1.0 mm', 't=1.5 mm','t=1.5 mm (w/ seal)','t=1.5 mm(2)','t=1.5 mm (w/ seal, 2)','t=1.5 mm (w/ seal, 3)','t=1.5 mm (seal both)']
   #filenames=[datadir+fname for fname in fnames]
-  #outpdf='pdf/CFRP_compare_TMPoff2.pdf'
-  #compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True)
+  ##outpdf='pdf/CFRP_compare_TMPoff3_seal.pdf'
+  ##compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True)
+  #outpdf='pdf/CFRP_compare_TMPoff3_seal_5hours.pdf'
+  #compare(filenames, labels, outpdf, col_name='Channel 1 [Pascal]', interval_tlabel=5, log_flag=True, max_hours=5)
 
 if __name__=="__main__":
   #plot_single_along_axis()
