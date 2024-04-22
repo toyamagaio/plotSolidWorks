@@ -20,7 +20,11 @@ def compare_alongZ(files,labels,outpdf,outcsv=None):
     df=pd.read_csv(filename,delimiter='\t')
     df['filename']=filename
     df['label']=label
-    cut=(df['Z [mm]']>0.142592-0.01) & (df['Z [mm]']<0.142592+0.01)&(df['Y [mm]']>0.156903-0.01)&(df['Y [mm]']<0.156903+0.01) &(df['Pressure [Pa]']>0)
+    yc=0
+    zc=0
+    dy=0.01
+    dz=0.01
+    cut=(df['Z [mm]']>zc-zd) & (df['Z [mm]']<zc+dz)&(df['Y [mm]']>yc-dy)&(df['Y [mm]']<yc+dy) &(df['Pressure [Pa]']>0)
     #cut=(df['Z [mm]']==0)&(df['Y [mm]']<0.1) &(df['Pressure [Pa]']>0)
     ax[0].plot(df[cut]['X [mm]'],df[cut]['Pressure [Pa]'],label=label)
     ax[1].plot(df[cut]['X [mm]'],df[cut]['Pressure [Pa]'],label=label)
